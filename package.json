@@ -1,0 +1,22 @@
+{
+  "name": "gateway---sefaz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "prism mock --host 0.0.0.0 --port 4010 swagger_gateway.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaykyRabelo/gateway-microfrontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/KaykyRabelo/gateway-microfrontend/issues"
+  },
+  "homepage": "https://github.com/KaykyRabelo/gateway-microfrontend#readme"
+}

@@ -1,0 +1,232 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SEFAZ Gateway Mock Server",
+    "version": "1.0.0",
+    "description": "Mock API for the gateway microfrontend, providing common SEFAZ integration endpoints for local development and testing."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4010"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok",
+                  "service": "gateway-sefaz-mock",
+                  "timestamp": "2026-09-16T13:35:27.653Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/status": {
+      "get": {
+        "summary": "Gateway status",
+        "responses": {
+          "200": {
+            "description": "Current gateway status",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "online",
+                  "environment": "sandbox",
+                  "version": "1.0.0",
+                  "timestamp": "2026-09-16T13:35:27.653Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/servicos": {
+      "get": {
+        "summary": "List available services",
+        "responses": {
+          "200": {
+            "description": "Mock services catalog",
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "id": "consulta-cnpj",
+                      "name": "Consulta CNPJ",
+                      "status": "available"
+                    },
+                    {
+                      "id": "consulta-nfe",
+                      "name": "Consulta NFe",
+                      "status": "available"
+                    },
+                    {
+                      "id": "emissao-nfe",
+                      "name": "Emissão NFe",
+                      "status": "maintenance"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Authenticate a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              },
+              "example": {
+                "username": "admin",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "token": "mock-jwt-token-123456",
+                  "expiresIn": 3600,
+                  "user": {
+                    "name": "Administrador",
+                    "role": "admin"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "invalid_credentials",
+                  "message": "Usuário ou senha inválidos."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/emitente/{cnpj}": {
+      "get": {
+        "summary": "Get company details by CNPJ",
+        "parameters": [
+          {
+            "name": "cnpj",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{14}$"
+            },
+            "example": "12345678000100"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "cnpj": "12345678000100",
+                  "razaoSocial": "Empresa Mock Ltda",
+                  "nomeFantasia": "Empresa Mock",
+                  "municipio": "São Paulo",
+                  "uf": "SP",
+                  "situacao": "ativa"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "not_found",
+                  "message": "Empresa não encontrada para o CNPJ informado."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/nfe/consulta/{chave}": {
+      "get": {
+        "summary": "Query an NFe by key",
+        "parameters": [
+          {
+            "name": "chave",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 44,
+              "maxLength": 44
+            },
+            "example": "35240112345678000157550010000000011000000012"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "NFe found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "chave": "35240112345678000157550010000000011000000012",
+                  "status": "autorizada",
+                  "numero": 1,
+                  "valor": 1250.0,
+                  "emitente": {
+                    "cnpj": "12345678000100",
+                    "razaoSocial": "Empresa Mock Ltda"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NFe not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "not_found",
+                  "message": "Chave da NFe não encontrada."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
